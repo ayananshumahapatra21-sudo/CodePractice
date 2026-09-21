@@ -5,12 +5,13 @@ Django settings for CodePractice project.
 from pathlib import Path
 from datetime import timedelta
 import os
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-codepractice-secret-key-change-in-production'
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-codepractice-secret-key-change-in-production')
 
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 't')
 
 ALLOWED_HOSTS = ['*']
 
@@ -34,6 +35,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -62,17 +64,21 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'codepractice.wsgi.application'
 
-# Database
-# Default: SQLite3 for zero-setup local execution
-# To use PostgreSQL, configure DATABASES to use 'django.db.backends.postgresql'
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# Database Setup
+# Uses DATABASE_URL env var if available (Render/Railway/PostgreSQL), else falls back to local SQLite3
+DATABASE_URL = os.getenv('DATABASE_URL')
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=600)
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
-# Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -116,6 +122,8 @@ USE_I18N = True
 
 USE_TZ = True
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
