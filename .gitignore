@@ -11,7 +11,6 @@ db.sqlite3-journal
 
 # Node
 node_modules/
-dist/
 build/
 .env
 .env.local
