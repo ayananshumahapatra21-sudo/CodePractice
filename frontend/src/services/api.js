@@ -9,7 +9,6 @@ const api = axios.create({
   },
 });
 
-// Interceptor for JWT Access Token
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('access_token');
   if (token) {
@@ -71,6 +70,29 @@ export const problemService = {
   }
 };
 
+export const aiService = {
+  getHint: async (problemId, currentHintLevel = 1) => {
+    const res = await api.post('/ai/hint/', { problem_id: problemId, current_hint_level: currentHintLevel });
+    return res.data;
+  },
+  explainCode: async (problemId, code, language = 'python') => {
+    const res = await api.post('/ai/explain/', { problem_id: problemId, code, language });
+    return res.data;
+  },
+  debugCode: async (problemId, code, errorMessage = '', language = 'python') => {
+    const res = await api.post('/ai/debug/', { problem_id: problemId, code, error_message: errorMessage, language });
+    return res.data;
+  },
+  teachConcept: async (topic, question = '', problemTitle = '') => {
+    const res = await api.post('/ai/learn/', { topic, question, problem_title: problemTitle });
+    return res.data;
+  },
+  generateProblem: async (params = {}) => {
+    const res = await api.post('/ai/generate/', params);
+    return res.data;
+  }
+};
+
 export const userService = {
   getDashboard: async () => {
     const res = await api.get('/dashboard/');
@@ -78,6 +100,37 @@ export const userService = {
   },
   getSubmissions: async () => {
     const res = await api.get('/submissions/');
+    return res.data;
+  },
+  getRecommendations: async () => {
+    const res = await api.get('/recommendations/');
+    return res.data;
+  },
+  getGamification: async () => {
+    const res = await api.get('/gamification/');
+    return res.data;
+  }
+};
+
+export const adminService = {
+  getStats: async () => {
+    const res = await api.get('/admin/stats/');
+    return res.data;
+  },
+  getProblems: async () => {
+    const res = await api.get('/admin/problems/');
+    return res.data;
+  },
+  createProblem: async (data) => {
+    const res = await api.post('/admin/problems/', data);
+    return res.data;
+  },
+  updateProblem: async (id, data) => {
+    const res = await api.put(`/admin/problems/${id}/`, data);
+    return res.data;
+  },
+  deleteProblem: async (id) => {
+    const res = await api.delete(`/admin/problems/${id}/`);
     return res.data;
   }
 };

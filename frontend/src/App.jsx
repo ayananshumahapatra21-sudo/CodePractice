@@ -7,6 +7,8 @@ import HomePage from './pages/HomePage';
 import ProblemsPage from './pages/ProblemsPage';
 import ProblemDetailPage from './pages/ProblemDetailPage';
 import DashboardPage from './pages/DashboardPage';
+import AIGeneratorPage from './pages/AIGeneratorPage';
+import AdminPage from './pages/AdminPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 
@@ -14,7 +16,7 @@ export default function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="min-h-screen bg-[#0a0c10] text-gray-100 flex flex-col font-sans">
+        <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
           <Navbar />
           <main className="flex-1">
             <Routes>
@@ -22,6 +24,8 @@ export default function App() {
               <Route path="/problems" element={<ProblemsPage />} />
               <Route path="/problems/:id" element={<ProblemDetailPage />} />
               <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/ai-generator" element={<AIGeneratorPage />} />
+              <Route path="/admin" element={<AdminPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
             </Routes>
